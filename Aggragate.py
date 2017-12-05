@@ -22,7 +22,7 @@ data = pd.read_csv('Phones_gyroscope.csv')
 target = data['gt']
 lab_enc = preprocessing.LabelEncoder()
 target = lab_enc.fit_transform(target)
-testtarget = target[600000:3205431]
+testtarget = target[600000:3205431]#size of test set. Previously set to 5000. I tried to see how long 2.5 million records would take, it took too long. 
 del data['Index']
 del data['User']
 del data['Model']
@@ -104,26 +104,26 @@ def train_test(size):
         rtree_pre_test = []
 
         
-
+#begin providing test data to measure accuracy
         
                 
-        for i in range(0,2605431):
+        for i in range(0,2605431):#this needs to match the size of the test set
             current = i
-            dt_pre_test.append(dt.predict(testset.iloc[current])[0])
+            dt_pre_test.append(dt.predict(testset.iloc[current])[0])#just like in training we predict with dt and rtree
             rtree_pre_test.append(rtree.predict(testset.iloc[current])[0])
         dt_pre_test = np.asarray(dt_pre_test)
         rtree_pre_test = np.asarray(rtree_pre_test)
         testset['rtree'] = pd.Series(rtree_pre_test, index=testset.index)
-        testset['dt'] = pd.Series(dt_pre_test, index=testset.index)
+        testset['dt'] = pd.Series(dt_pre_test, index=testset.index)#add the predictions as features
 
         print("Agraget test set generated")
 
-        for i in range(0,2605431):
+        for i in range(0,2605431):#now we feed it into the final algorithm
                 
             if testtarget[current] == nn.predict(testset.iloc[current]):
                                     new_model = new_model +1
         
-    print("Size: "+str(size))
+    print("Training set Size: "+str(size))
     print("Correct: " + str(new_model))
     
 
